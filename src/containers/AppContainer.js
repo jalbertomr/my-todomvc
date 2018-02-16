@@ -1,20 +1,25 @@
 import AppView from '../views/AppView';
 import {Container} from 'flux/utils';
 import TodoStore from '../data/TodoStore';
+import TodoDraftStore from '../data/TodoDraftStore';
 import TodoActions from '../data/TodoActions';
 
 function getStores() {
     return [
+        TodoDraftStore,
         TodoStore,
     ];
 }
 
 function getState() {
     return {
+        draft: TodoDraftStore.getState(),
         todos: TodoStore.getState(),
 
+        onAdd: TodoActions.addTodo,
         onDeleteTodo: TodoActions.deleteTodo,
         onToggleTodo: TodoActions.toggleTodo,
+        onUpdateDraft:  TodoActions.updateDraft,
     };
 }
 

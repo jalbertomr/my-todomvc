@@ -14,6 +14,7 @@ function Header(props) {
     return (
     <header id="header">
         <h1>Por hacer...</h1>
+        <NewTodo {...props} />
     </header>
     );
 }
@@ -70,5 +71,28 @@ function Footer(props) {
         </footer>
     );
 }
+
+const ENTER_KEY_CODE = 13;
+function NewTodo(props) {
+    const addTodo = () => props.onAdd(props.draft);
+    const onBlur = () => addTodo();
+    const onChange = (event) => props.onUpdateDraft(event.target.value);
+    const onKeyDown = (event) => {
+        if (event.keyCode === ENTER_KEY_CODE) {
+            addTodo();
+        }
+    };
+    return (
+        <input
+            autoFocus={true}
+            id="new-todo"
+            placeholder = "Que tarea hay que hacer?"
+            value={props.draft}
+            onBlur={onBlur}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+        />
+    );
+};
 
 export default AppView;
