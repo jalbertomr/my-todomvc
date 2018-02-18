@@ -16,6 +16,12 @@ const Actions = {
         });
     },
     
+    deleteCompletedTodos() {
+        TodoDispatcher.dispatch({
+            type: TodoActionTypes.DELETE_COMPLETED_TODOS
+        })
+    },
+
     toggleTodo(id) {
         TodoDispatcher.dispatch({
             type: TodoActionTypes.TOGGLE_TODO,

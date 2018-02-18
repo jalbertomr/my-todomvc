@@ -58,7 +58,18 @@ function Footer(props) {
     }
 
     const remaining = props.todos.filter(todo => !todo.complete).size;
+    const completed = props.todos.size - remaining;
     const phrase = remaining === 1 ? ' tarea pendiente' : ' tareas pendientes';
+
+    let clearCompletedButton = null;
+    if (completed > 0) {
+        clearCompletedButton =
+            <button
+            id="clear-completed"
+            onClick={props.onDeleteCompletedTodos}>
+            Limpiar Completadas ({completed})
+            </button>
+    }
 
     return (
         <footer id="footer">
@@ -68,6 +79,7 @@ function Footer(props) {
                 </strong>
                 {phrase}
             </span>
+            {clearCompletedButton}
         </footer>
     );
 }

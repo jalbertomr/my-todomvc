@@ -30,6 +30,9 @@ class TodoStore extends ReduceStore {
             case TodoActionTypes.DELETE_TODO:
                 return state.delete(action.id);
 
+            case TodoActionTypes.DELETE_COMPLETED_TODOS:
+                return state.filter(todo => !todo.complete);
+
             case TodoActionTypes.TOGGLE_TODO:
                 return state.update(
                     action.id,
