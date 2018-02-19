@@ -19,7 +19,7 @@ const Actions = {
     deleteCompletedTodos() {
         TodoDispatcher.dispatch({
             type: TodoActionTypes.DELETE_COMPLETED_TODOS
-        })
+        });
     },
 
     toggleTodo(id) {
@@ -27,6 +27,12 @@ const Actions = {
             type: TodoActionTypes.TOGGLE_TODO,
             id,
         });  
+    },
+
+    toggleAllTodos() {
+        TodoDispatcher.dispatch({
+            type: TodoActionTypes.TOGGLE_ALL_TODOS
+        });
     },
 
     updateDraft(text) {

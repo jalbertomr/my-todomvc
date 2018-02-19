@@ -23,8 +23,21 @@ function Main(props) {
     if (props.todos.size === 0) {
         return null;
     }
+
+    //se puede mover al Container si es constoso.
+    const areAllComplete = props.todos.every(todo => todo.complete);
+
     return (
         <section id="main">
+            <input
+            checked={areAllComplete ? 'checked' : ''}
+            id="toggle-all"
+            type="checkbox"
+            onChange={props.onToggleAllTodos}
+            />
+            <label htmlFor="toggle-all">
+              Marca todas como Completadas
+            </label>
             <ul id="todo-list">
                 {[...props.todos.values()].reverse().map(todo => (
                     <li key={todo.id}>
