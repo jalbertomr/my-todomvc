@@ -1,123 +1,168 @@
 import React from 'react';
 
+import classnames from 'classnames';
+
 function AppView(props) {
-    return (
-        <div>
-        <Header {...props} />
-        <Main {...props} />
-        <Footer {...props} />
-        </div>
-        );
+  return (
+    <div>
+      <Header {...props} />
+      <Main {...props} />
+      <Footer {...props} />
+    </div>
+  );
 }
 
 function Header(props) {
-    return (
+  return (
     <header id="header">
-        <h1>Por hacer...</h1>
-        <NewTodo {...props} />
+      <h1>Pendientes</h1>
+      <NewTodo {...props} />
     </header>
-    );
+  );
 }
 
 function Main(props) {
-    if (props.todos.size === 0) {
-        return null;
-    }
+  if (props.todos.size === 0) {
+    return null;
+  }
 
-    //se puede mover al Container si es constoso.
-    const areAllComplete = props.todos.every(todo => todo.complete);
+  // Si esto fuera costoso prodría moverse al Container.
+  const areAllComplete = props.todos.every(todo => todo.complete);
 
-    return (
-        <section id="main">
-            <input
-            checked={areAllComplete ? 'checked' : ''}
-            id="toggle-all"
-            type="checkbox"
-            onChange={props.onToggleAllTodos}
-            />
-            <label htmlFor="toggle-all">
-              Marca todas como Completadas
-            </label>
-            <ul id="todo-list">
-                {[...props.todos.values()].reverse().map(todo => (
-                    <li key={todo.id}>
-                        <div className="view">
-                            <input
-                                className="toggle"
-                                type="checkbox"
-                                checked={todo.complete}
-                                onChange={
-                                () => {props.onToggleTodo(todo.id)}
-                                }
-                            />
-                            <label>{todo.text}</label>
-                            <button
-                                className="destroy"
-                                onClick={
-                                () => {props.onDeleteTodo(todo.id)}
-                                }
-                            />                            
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </section>
-    );
+  return (
+    <section id="main">
+      <input
+        checked={areAllComplete ? 'checked' : ''}
+        id="toggle-all"
+        type="checkbox"
+        onChange={props.onToggleAllTodos}
+      />
+      <label htmlFor="toggle-all">
+        marcar todas como compleatdas.
+      </label>
+      <ul id="todo-list">
+        {[...props.todos.values()].reverse().map(todo => (
+          <TodoItem
+            key={todo.id}
+            editing={props.editing}
+            todo={todo}
+            onDeleteTodo={props.onDeleteTodo}
+            onEditTodo={props.onEditTodo}
+            onStartEditingTodo={props.onStartEditingTodo}
+            onStopEditingTodo={props.onStopEditingTodo}
+            onToggleTodo={props.onToggleTodo}
+          />
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 function Footer(props) {
-    if (props.todos.size === 0) {
-        return null;
-    }
+  if (props.todos.size === 0) {
+    return null;
+  }
 
-    const remaining = props.todos.filter(todo => !todo.complete).size;
-    const completed = props.todos.size - remaining;
-    const phrase = remaining === 1 ? ' tarea pendiente' : ' tareas pendientes';
+  const remaining = props.todos.filter(todo => !todo.complete).size;
+  const completed = props.todos.size - remaining;
+  const phrase = remaining === 1 ? ' tarea pendiente' : ' tareas pendientes';
 
-    let clearCompletedButton = null;
-    if (completed > 0) {
-        clearCompletedButton =
-            <button
-            id="clear-completed"
-            onClick={props.onDeleteCompletedTodos}>
-            Limpiar Completadas ({completed})
-            </button>
-    }
+  let clearCompletedButton = null;
+  if (completed > 0) {
+    clearCompletedButton =
+      <button
+        id="clear-completed"
+        onClick={props.onDeleteCompletedTodos}>
+        Limpiar Completadas ({completed})
+      </button>
+  }
 
-    return (
-        <footer id="footer">
-            <span id="todo-count">
-                <strong>
-                    {remaining}
-                </strong>
-                {phrase}
-            </span>
-            {clearCompletedButton}
-        </footer>
-    );
+  return (
+    <footer id="footer">
+      <span id="todo-count">
+        <strong>
+          {remaining}
+        </strong>
+        {phrase}
+      </span>
+      {clearCompletedButton}
+    </footer>
+  );
 }
 
 const ENTER_KEY_CODE = 13;
 function NewTodo(props) {
-    const addTodo = () => props.onAdd(props.draft);
-    const onBlur = () => addTodo();
-    const onChange = (event) => props.onUpdateDraft(event.target.value);
+  const addTodo = () => props.onAdd(props.draft);
+  const onBlur = () => addTodo();
+  const onChange = (event) => props.onUpdateDraft(event.target.value);
+  const onKeyDown = (event) => {
+    if (event.keyCode === ENTER_KEY_CODE) {
+      addTodo();
+    }
+  };
+  return (
+    <input
+      autoFocus={true}
+      id="new-todo"
+      placeholder="Que tarea se necesita hacer?"
+      value={props.draft}
+      onBlur={onBlur}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+    />
+  );
+}
+
+function TodoItem(props) {
+  const {editing, todo} = props;
+  const isEditing = editing === todo.id;
+  const onDeleteTodo = () => props.onDeleteTodo(todo.id);
+  const onStartEditingTodo = () => props.onStartEditingTodo(todo.id);
+  const onToggleTodo = () => props.onToggleTodo(todo.id);
+
+  // Construye el input para la tarea si es necesario.
+  let input = null;
+  if (isEditing) {
+    const onChange = (event) => props.onEditTodo(todo.id, event.target.value);
+    const onStopEditingTodo = props.onStopEditingTodo;
     const onKeyDown = (event) => {
-        if (event.keyCode === ENTER_KEY_CODE) {
-            addTodo();
-        }
+      if (event.keyCode === ENTER_KEY_CODE) {
+        onStopEditingTodo();
+      }
     };
-    return (
+    input =
+      <input
+        autoFocus={true}
+        className="edit"
+        value={todo.text}
+        onBlur={onStopEditingTodo}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+      />;
+  }
+
+  return (
+    <li
+      className={classnames({
+        completed: todo.complete,
+        editing: isEditing,
+      })}>
+      <div className="view">
         <input
-            autoFocus={true}
-            id="new-todo"
-            placeholder = "Que tarea hay que hacer?"
-            value={props.draft}
-            onBlur={onBlur}
-            onChange={onChange}
-            onKeyDown={onKeyDown}
+          className="toggle"
+          type="checkbox"
+          checked={todo.complete}
+          onChange={onToggleTodo}
         />
-    );
-};
+        <label onDoubleClick={onStartEditingTodo}>
+          {todo.text}
+        </label>
+        <button className="destroy" onClick={onDeleteTodo} />
+      </div>
+      {input}
+    </li>
+  );
+}
+
 
 export default AppView;

@@ -15,6 +15,7 @@ class TodoStore extends ReduceStore {
     }
     
     reduce(state, action) {
+//        console.log(state + '==' + action.type + '-'+action.id + '-'+action.text);
         switch (action.type) {
             case TodoActionTypes.ADD_TODO:
                 //Don't add todos with no text.
@@ -27,6 +28,10 @@ class TodoStore extends ReduceStore {
                     text: action.text,
                     complete: false,
                 }));
+
+            case TodoActionTypes.EDIT_TODO:
+                return state.setIn([action.id, 'text'], action.text);
+
             case TodoActionTypes.DELETE_TODO:
                 return state.delete(action.id);
 

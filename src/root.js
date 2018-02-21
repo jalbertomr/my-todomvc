@@ -20,4 +20,4 @@ import TodoActions from './data/TodoActions';
 
 TodoActions.addTodo('Mi Primer tarea');
 TodoActions.addTodo('Otra Tarea');
-TodoActions.addTodo('Terminando el tutorial');
+TodoActions.addTodo('ya tiene la funcion de nueva tarea');
